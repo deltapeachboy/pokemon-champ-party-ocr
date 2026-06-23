@@ -1,224 +1,746 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ポケモンSV 画面解析（カプセルエリア・クロップテスト）</title>
-    <!-- Tesseract.js の読み込み -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f4f6f9;
-            color: #333;
-        }
-        h2 { text-align: center; color: #2c3e50; }
-        .description { text-align: center; color: #7f8c8d; margin-bottom: 30px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ポケモン チャンピオンズ パーティ解析ツール</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <style>
+    :root {
+      --bg:#0f1117; --panel:#1a1d27; --border:#2a2d3a;
+      --accent:#4f8ef7; --accent2:#34d399; --warn:#f59e0b;
+      --text:#e2e8f0; --muted:#64748b; --card:#1e2130; --inp:#252837;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px;}
+    header{text-align:center;margin-bottom:28px;}
+    header h1{font-size:20px;font-weight:700;letter-spacing:.05em;color:var(--accent);}
+    header p{color:var(--muted);font-size:12px;margin-top:5px;}
 
-        .upload-area {
-            border: 3px dashed #bdc3c7;
-            padding: 40px 20px;
-            text-align: center;
-            background: #fff;
-            cursor: pointer;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            transition: all 0.3s ease;
-        }
-        .upload-area:hover {
-            border-color: #3498db;
-            background: #ecf0f1;
-        }
+    .upload-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:860px;margin:0 auto 20px;}
+    .dz{border:2px dashed var(--border);border-radius:10px;padding:24px 16px;text-align:center;cursor:pointer;background:var(--panel);transition:border-color .2s,background .2s;position:relative;}
+    .dz:hover{border-color:var(--accent);background:#1e2536;}
+    .dz.done{border-color:var(--accent2);background:#152820;}
+    .dz input[type=file]{display:none;}
+    .dz .icon{font-size:28px;margin-bottom:6px;}
+    .dz .lbl{font-weight:700;font-size:13px;}
+    .dz .sub{font-size:11px;color:var(--muted);margin-top:3px;}
+    .dz .st{position:absolute;bottom:8px;left:0;right:0;font-size:11px;color:var(--accent2);}
 
-        /* 2つの切り出し結果を並べるグリッドレイアウト */
-        .results-grid {
-            display: flex;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .result-card {
-            flex: 1;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-            text-align: center;
-        }
-        .result-card h3 {
-            margin-top: 0;
-            color: #34495e;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 8px;
-        }
+    #status-bar{max-width:860px;margin:0 auto 18px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;color:var(--warn);text-align:center;}
 
-        canvas {
-            border: 2px solid #3498db;
-            background: #000;
-            max-width: 100%;
-            height: auto;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
+    .preview-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;}
+    .prev-box{background:var(--panel);border:1px solid var(--border);border-radius:7px;padding:7px 9px;text-align:center;}
+    .prev-box span{display:block;font-size:10px;color:var(--muted);margin-bottom:3px;}
+    .prev-box canvas{max-height:90px;max-width:200px;border:1px solid var(--border);}
 
-        .status {
-            font-weight: bold;
-            color: #e67e22;
-            margin: 10px 0;
-            font-size: 14px;
-        }
+    .party-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(370px,1fr));gap:14px;max-width:1160px;margin:0 auto 28px;}
+    .pk-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;}
+    .pk-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+    .slot-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+    .nat-badge{font-size:11px;color:var(--muted);margin-left:auto;}
 
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            background: #2c3e50;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 18px;
-            text-align: center;
-            font-weight: bold;
-        }
-    </style>
+    .fg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px;}
+    .fg.full{grid-template-columns:1fr;}
+    .field label{display:block;font-size:10px;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em;}
+    .field input{width:100%;background:var(--inp);border:1px solid var(--border);border-radius:4px;color:var(--accent2);font-size:13px;font-weight:600;padding:5px 9px;}
+    .field input.raw{color:var(--warn);border-color:#3d3010;}
+    .field input.empty{color:var(--muted);}
+
+    .mv-sec{margin-top:9px;}
+    .mv-sec .sec-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;}
+    .mv-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+
+    .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:9px;}
+    .sc{background:var(--inp);border:1px solid var(--border);border-radius:4px;padding:4px 6px;text-align:center;}
+    .sc .sn{font-size:9px;color:var(--muted);display:block;}
+    .sc .sv{font-size:13px;font-weight:700;color:var(--text);}
+    .sc .se{font-size:9px;color:var(--accent);display:block;}
+    .sc.up .sv{color:#f87171;} .sc.dn .sv{color:#60a5fa;}
+
+    .export-area{max-width:860px;margin:0 auto;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px;}
+    .export-area h2{font-size:14px;font-weight:700;margin-bottom:14px;}
+    .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+    .btn{padding:8px 16px;font-size:12px;font-weight:700;border-radius:5px;border:none;cursor:pointer;transition:opacity .15s;}
+    .btn:hover{opacity:.85;}
+    .btn-blue{background:var(--accent);color:#fff;}
+    .btn-green{background:var(--accent2);color:#000;}
+    .btn-gold{background:var(--warn);color:#000;}
+    textarea#out{width:100%;height:190px;background:#0a0c14;color:#a3e635;border:1px solid var(--border);border-radius:5px;font-family:'Courier New',monospace;font-size:12px;padding:10px;resize:vertical;}
+    canvas#vc{display:none;}
+    @media(max-width:600px){.upload-row,.party-grid{grid-template-columns:1fr;}body{padding:10px;}}
+  </style>
 </head>
 <body>
+<canvas id="vc"></canvas>
+<header>
+  <h1>ポケモン チャンピオンズ パーティ解析ツール</h1>
+  <p>能力画面（表）とステータス画面（裏）を読み込み、6匹分のデータを一括出力します</p>
+</header>
 
-    <h2>ポケモンSV カプセルエリア解析テスト</h2>
-    <div class="description">
-        画像をアップロードすると、1920x1080にリサイズした上で、チームID（左側）とトレーナー名（右側）をそれぞれ自動で切り出し、並列で文字認識を行います。
-    </div>
+<div class="upload-row">
+  <div class="dz" id="dz-f"><input type="file" id="fi-f" accept="image/*">
+    <div class="icon">📋</div>
+    <div class="lbl">【手順1】能力画面（表）</div>
+    <div class="sub">技・特性・持ち物が映る画面</div>
+    <div class="st" id="st-f">未アップロード</div>
+  </div>
+  <div class="dz" id="dz-b"><input type="file" id="fi-b" accept="image/*">
+    <div class="icon">📊</div>
+    <div class="lbl">【手順2】ステータス画面（裏）</div>
+    <div class="sub">実数値・努力値・性格が映る画面</div>
+    <div class="st" id="st-b">未アップロード</div>
+  </div>
+</div>
 
-    <!-- ドロップエリア -->
-    <div class="upload-area" id="drop-zone">
-        ここにスクリーンショットをドラッグ＆ドロップ<br>（またはクリックして選択）
-        <input type="file" id="file-input" accept="image/*" style="display: none;">
-    </div>
+<div id="status-bar">辞書データを読み込んでいます...</div>
 
-    <!-- 解析結果のカード表示 -->
-    <div class="results-grid">
-        <!-- 1. 左側カプセルの解析 -->
-        <div class="result-card">
-            <h3>1. チーム名 / チームID (左側)</h3>
-            <canvas id="canvas-team"></canvas>
-            <div class="status" id="status-team">画像の選択を待っています...</div>
-            <input type="text" id="output-team" readonly placeholder="結果待機中...">
+<div class="preview-row">
+  <div class="prev-box"><span>パネル1</span><canvas id="pv0"></canvas></div>
+  <div class="prev-box"><span>パネル2</span><canvas id="pv1"></canvas></div>
+  <div class="prev-box"><span>パネル3</span><canvas id="pv2"></canvas></div>
+  <div class="prev-box"><span>パネル4</span><canvas id="pv3"></canvas></div>
+</div>
+
+<div class="party-grid" id="party-grid"></div>
+
+<div class="export-area">
+  <h2>データ出力</h2>
+  <div class="btn-row">
+    <button class="btn btn-blue"  id="btn-csv">CSVで保存</button>
+    <button class="btn btn-blue"  id="btn-json">JSONで保存</button>
+    <button class="btn btn-green" id="btn-text">ブログ用テキスト生成</button>
+    <button class="btn btn-gold"  id="btn-raw">OCR生テキスト表示</button>
+  </div>
+  <textarea id="out" readonly placeholder="両方の画像をアップロードすると、ここにマージされたデータが出力されます..."></textarea>
+</div>
+
+<script>
+// ============================================================
+// 座標定数 — Python版 parse_front_image / parse_back_image と完全同期
+// ============================================================
+
+// 6パネルの左上座標 (1920×1080基準) — Python: panels[]
+const PANELS = [
+  {x:184,y:262},{x:986,y:262},
+  {x:184,y:482},{x:986,y:482},
+  {x:184,y:704},{x:986,y:704},
+];
+
+// 表画面: パネル内の行オフセット — Python: rows[] (key,dx,dy,w,h)
+const FRONT_ROWS = [
+  ["pokemon", 78,  10, 280, 45],
+  ["ability", 95,  62, 260, 38],
+  ["item",    95, 112, 310, 42],
+  ["move1",  430,   8, 300, 42],
+  ["move2",  430,  56, 300, 42],
+  ["move3",  430, 103, 300, 42],
+  ["move4",  430, 150, 300, 42],
+];
+
+// 裏画面: 実数値・努力値ボックス — Python: boxes{}
+const BACK_BOXES = {
+  hp:         {stat:[200, 45,85,42],ev:[320, 45,48,42]},
+  attack:     {stat:[200, 90,85,42],ev:[320, 90,48,42]},
+  defense:    {stat:[200,132,85,42],ev:[320,132,48,42]},
+  sp_attack:  {stat:[560, 45,75,42],ev:[680, 45,45,42]},
+  sp_defense: {stat:[560, 90,75,42],ev:[680, 90,45,42]},
+  speed:      {stat:[560,132,75,42],ev:[680,132,45,42]},
+};
+
+// 性格矢印検出領域 — Python: classify_nature_from_panel checks[]
+const NATURE_CHECKS = [
+  ["attack",    "こうげき",186,102,24,24],
+  ["defense",   "ぼうぎょ",186,144,24,24],
+  ["sp_attack", "とくこう",520, 57,24,24],
+  ["sp_defense","とくぼう",520,102,24,24],
+  ["speed",     "すばやさ",530,145,24,24],
+];
+
+const STAT_KEYS   = ["hp","attack","defense","sp_attack","sp_defense","speed"];
+const STAT_LABELS = {hp:"HP",attack:"こうげき",defense:"ぼうぎょ",sp_attack:"とくこう",sp_defense:"とくぼう",speed:"すばやさ"};
+
+// ============================================================
+// 辞書 (外部ファイルがあれば上書き)
+// ============================================================
+let POKEMON_DICT = ["フォークス","イオナン","ラント","キモクナーイ","ミミック","ヤミレ"];
+let ABILITY_DICT = ["かそく","ひらいしん","あついしぼう","げきりゅう","おうごんのからだ","ばけのかわ"];
+let ITEM_DICT    = ["バシャーモナイト","ライチュウナイトY","きあいのタスキ","オボンのみ","こだわりスカーフ","いのちのたま"];
+let MOVE_DICT    = ["ブレイズキック","とびひざげり","かみなりパンチ","まもる","でんじほう","きあいだま","なみのり","わるだくみ","じしん","つららばり","がんせきふうじ","こおりのつぶて","クイックターン","あくび","ステルスロック","ゴールドラッシュ","シャドーボール","10まんボルト","トリック","じゃれつく","シャドークロー","かげうち","つるぎのまい"];
+
+async function loadDictionaries() {
+  setStatus("辞書データを読み込んでいます...");
+  const tryFetch = async (path, parser) => {
+    try { const r=await fetch(path); return r.ok ? parser(await r.text()) : null; } catch { return null; }
+  };
+  const lines = t => t.split('\n').map(l=>l.trim()).filter(l=>l&&!l.startsWith('#'));
+  const pd = await tryFetch('./data/masters/pokemon.csv', t => {
+    return t.split('\n')
+      .slice(1) // 1行目のヘッダー(dex_no,name_ja,name_en,type_1,type_2)をカットして2行目からにする
+      .map(line => {
+        const parts = line.split(',');
+        // 2番目の要素（日本語ポケモン名）を取り出して余計なダブルクォーテーションを消す
+        return parts[1] ? parts[1].trim().replace(/"/g, '') : null;
+      })
+      .filter(line => line); // 空白の行を除外する
+  });
+  if (pd) POKEMON_DICT = pd;
+  const id = await tryFetch('./data/masters/item.csv', t => {
+    return t.split('\n')
+      .slice(1) // 1行目のヘッダー(id,name_ja,name_en,is_megastone)をカットして2行目からにする
+      .map(line => {
+        const parts = line.split(',');
+        // 2番目の要素（日本語アイテム名）を取り出して余計なダブルクォーテーションを消す
+        return parts[1] ? parts[1].trim().replace(/"/g, '') : null;
+      })
+      .filter(line => line); // 空白の行を除外する
+  });
+  if (id) ITEM_DICT = id;
+  const md = await tryFetch('./data/masters/move.csv', t => {
+    return t.split('\n')
+      .slice(1) // 1行目のヘッダー(id,name_ja,name_en,type,category)をカットして2行目からにする
+      .map(line => {
+        const parts = line.split(',');
+        // 2番目の要素（日本語技名）を取り出して余計なダブルクォーテーションを消す
+        return parts[1] ? parts[1].trim().replace(/"/g, '') : null;
+      })
+      .filter(line => line); // 空白の行を除外する
+  });
+  if (md) MOVE_DICT = md;
+  const ad = await tryFetch('./data/masters/ability.csv', t => {
+    return t.split('\n')
+      .slice(1) // 1行目のヘッダー(id,name_ja,name_en)をカットして2行目からにする
+      .map(line => {
+        const parts = line.split(',');
+        // 2番目の要素（日本語特性名）を取り出して余計なダブルクォーテーションを消す
+        return parts[1] ? parts[1].trim().replace(/"/g, '') : null;
+      })
+      .filter(line => line); // 空白の行を除外する
+  });
+  if (ad) ABILITY_DICT = ad;
+  setStatus("準備完了。能力画面（表）をアップロードしてください。");
+}
+
+// ============================================================
+// 状態
+// ============================================================
+let FRONT_DATA = null;
+let BACK_DATA  = null;
+let RAW_DEBUG  = [];
+const vc = document.getElementById('vc');
+
+// ============================================================
+// UI
+// ============================================================
+function setStatus(msg, color) {
+  const el=document.getElementById('status-bar');
+  el.textContent=msg; el.style.color=color||'var(--warn)';
+}
+
+function initGrid() {
+  document.getElementById('party-grid').innerHTML = Array.from({length:6},(_,i)=>`
+    <div class="pk-card">
+      <div class="pk-head">
+        <span class="slot-badge">スロット ${i+1}</span>
+        <span class="nat-badge" id="nat-${i}">性格: —</span>
+      </div>
+      <div class="fg full"><div class="field"><label>ポケモン名</label><input type="text" id="nm-${i}" readonly placeholder="—"></div></div>
+      <div class="fg">
+        <div class="field"><label>特性</label><input type="text" id="ab-${i}" readonly placeholder="—"></div>
+        <div class="field"><label>持ち物</label><input type="text" id="it-${i}" readonly placeholder="—"></div>
+      </div>
+      <div class="mv-sec">
+        <div class="sec-lbl">技構成</div>
+        <div class="mv-grid">
+          ${[0,1,2,3].map(j=>`<div class="field"><input type="text" id="mv-${i}-${j}" readonly placeholder="技${j+1}"></div>`).join('')}
         </div>
+      </div>
+      <div class="stats-grid">
+        ${STAT_KEYS.map(k=>`
+          <div class="sc" id="sc-${i}-${k}">
+            <span class="sn">${STAT_LABELS[k]}</span>
+            <span class="sv" id="sv-${i}-${k}">—</span>
+            <span class="se" id="se-${i}-${k}"></span>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+initGrid();
+loadDictionaries();
 
-        <!-- 2. 右側カプセルの解析 -->
-        <div class="result-card">
-            <h3>2. トレーナー名 (右側)</h3>
-            <canvas id="canvas-trainer"></canvas>
-            <div class="status" id="status-trainer">画像の選択を待っています...</div>
-            <output_field></output_field>
-            <input type="text" id="output-trainer" style="width: 100%; padding: 8px; box-sizing: border-box; background: #2c3e50; color: #fff; border: none; border-radius: 4px; font-size: 18px; text-align: center; font-weight: bold;" readonly placeholder="結果待機中...">
-        </div>
-    </div>
+// ============================================================
+// ドロップゾーン
+// ============================================================
+['f','b'].forEach(side=>{
+  const dz=document.getElementById(`dz-${side}`);
+  const fi=document.getElementById(`fi-${side}`);
+  dz.addEventListener('click',()=>fi.click());
+  fi.addEventListener('change',e=>e.target.files[0]&&handleFile(e.target.files[0],side==='f'));
+  dz.addEventListener('dragover',e=>e.preventDefault());
+  dz.addEventListener('drop',e=>{e.preventDefault();e.dataTransfer.files[0]&&handleFile(e.dataTransfer.files[0],side==='f');});
+});
 
-    <!-- 仮想リサイズ用の非表示キャンバス -->
-    <canvas id="virtual-canvas" style="display: none;"></canvas>
+function handleFile(file,isFront){
+  const img=new Image();
+  img.onload=()=>processImage(img,isFront);
+  img.src=URL.createObjectURL(file);
+  document.getElementById(isFront?'st-f':'st-b').textContent='処理中...';
+}
 
-    <script>
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
+// ============================================================
+// 画像正規化
+// ============================================================
+function get169Bounds(w,h){
+  const r=16/9,cr=w/h;
+  let sx=0,sy=0,sw=w,sh=h;
+  if(cr>r){sw=h*r;sx=(w-sw)/2;}else if(cr<r){sh=w/r;sy=(h-sh)/2;}
+  return{sx,sy,sw,sh};
+}
 
-        // 左側の要素
-        const canvasTeam = document.getElementById('canvas-team');
-        const statusTeam = document.getElementById('status-team');
-        const outputTeam = document.getElementById('output-team');
+function cropTo(src,x,y,w,h){
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  c.getContext('2d').drawImage(src,x,y,w,h,0,0,w,h);return c;
+}
 
-        // 右側の要素
-        const canvasTrainer = document.getElementById('canvas-trainer');
-        const statusTrainer = document.getElementById('status-trainer');
-        const outputTrainer = document.getElementById('output-trainer');
+// ============================================================
+// 前処理1: preprocess_text_line_for_ocr 相当
+// 4倍拡大 + 3x3平均ぼかし(GaussianBlur近似) + threshold=168 + 反転
+// ============================================================
+function preprocessTextLine(canvas){
+  const W=canvas.width*4,H=canvas.height*4;
+  const big=document.createElement('canvas');big.width=W;big.height=H;
+  big.getContext('2d').drawImage(canvas,0,0,W,H);
+  const ctx=big.getContext('2d');
+  const id=ctx.getImageData(0,0,W,H);const px=id.data;
 
-        const virtualCanvas = document.getElementById('virtual-canvas');
+  // グレースケール
+  for(let i=0;i<px.length;i+=4){
+    const g=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
+    px[i]=px[i+1]=px[i+2]=g;px[i+3]=255;
+  }
+  // 3x3 平均ぼかし
+  const src=new Uint8ClampedArray(px);
+  for(let y=1;y<H-1;y++) for(let x=1;x<W-1;x++){
+    let s=0;
+    for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++) s+=src[((y+dy)*W+(x+dx))*4];
+    const v=s/9,idx=(y*W+x)*4;
+    px[idx]=px[idx+1]=px[idx+2]=v;
+  }
+  // threshold=168 + 反転 (255-thresh)
+  for(let i=0;i<px.length;i+=4){
+    const v=px[i]>168?255:0;
+    px[i]=px[i+1]=px[i+2]=255-v;px[i+3]=255;
+  }
+  ctx.putImageData(id,0,0);return big;
+}
 
-        // イベントリスナーの登録
-        dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
-        dropZone.addEventListener('dragover', (e) => e.preventDefault());
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            handleFile(e.dataTransfer.files[0]);
-        });
+// ============================================================
+// 前処理2: preprocess_digit_box 相当
+// 8倍拡大 + connectedComponents でノイズ除去 + 余白クロップ
+// ============================================================
+function preprocessDigitBox(canvas){
+  const W=canvas.width*8,H=canvas.height*8;
+  const big=document.createElement('canvas');big.width=W;big.height=H;
+  big.getContext('2d').drawImage(canvas,0,0,W,H);
+  const ctx=big.getContext('2d');
+  const id=ctx.getImageData(0,0,W,H);const px=id.data;
 
-        function handleFile(file) {
-            if (!file) return;
-            const img = new Image();
-            img.onload = () => processImage(img);
-            img.src = URL.createObjectURL(file);
+  // グレースケール + threshold=155 + 反転
+  const binary=new Uint8Array(W*H);
+  for(let i=0;i<px.length;i+=4){
+    const g=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
+    const v=g>155?255:0;
+    binary[i>>2]=v===0?1:0;
+    px[i]=px[i+1]=px[i+2]=v===0?0:255;px[i+3]=255;
+  }
+
+  // Union-Find ラベリング
+  const label=new Int32Array(W*H).fill(-1);
+  let nextLabel=1;
+  const parent=new Int32Array(W*H+1);
+  for(let i=0;i<=W*H;i++) parent[i]=i;
+  function find(x){while(parent[x]!==x)x=parent[x]=parent[parent[x]];return x;}
+  function union(a,b){parent[find(a)]=find(b);}
+
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+    if(!binary[y*W+x]) continue;
+    const up=y>0&&binary[(y-1)*W+x]?label[(y-1)*W+x]:-1;
+    const lf=x>0&&binary[y*W+(x-1)]?label[y*W+(x-1)]:-1;
+    if(up<0&&lf<0){label[y*W+x]=nextLabel++;}
+    else if(up>=0&&lf<0){label[y*W+x]=up;}
+    else if(up<0&&lf>=0){label[y*W+x]=lf;}
+    else{label[y*W+x]=up;union(up,lf);}
+  }
+
+  // 各成分のbbox
+  const bboxes={};
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+    if(!binary[y*W+x]) continue;
+    const l=find(label[y*W+x]);
+    if(!bboxes[l]) bboxes[l]={x0:x,x1:x,y0:y,y1:y,area:0};
+    const b=bboxes[l];
+    if(x<b.x0)b.x0=x;if(x>b.x1)b.x1=x;if(y<b.y0)b.y0=y;if(y>b.y1)b.y1=y;b.area++;
+  }
+
+  // area>40, w>4, h>8, 右端アーティファクト除外 — Python条件と同一
+  const keep=new Set();
+  for(const [l,b] of Object.entries(bboxes)){
+    const w=b.x1-b.x0+1,h=b.y1-b.y0+1;
+    const isRight=b.x0>W*0.82&&h>H*0.45;
+    if(b.area>40&&w>4&&h>8&&!isRight) keep.add(parseInt(l));
+  }
+  for(let i=0;i<W*H;i++){
+    if(!binary[i]) continue;
+    if(!keep.has(find(label[i]))){px[i*4]=px[i*4+1]=px[i*4+2]=255;}
+  }
+  ctx.putImageData(id,0,0);
+
+  // 文字範囲でトリム + パディング30px
+  let x0=W,x1=0,y0=H,y1=0,found=false;
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+    if(id.data[(y*W+x)*4]<128){
+      if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;found=true;
+    }
+  }
+  if(!found) return big;
+  x0=Math.max(0,x0-20);x1=Math.min(W,x1+21);y0=Math.max(0,y0-20);y1=Math.min(H,y1+21);
+  const cw=x1-x0+60,ch=y1-y0+60;
+  const out=document.createElement('canvas');out.width=cw;out.height=ch;
+  const oc=out.getContext('2d');
+  oc.fillStyle='white';oc.fillRect(0,0,cw,ch);
+  oc.drawImage(big,x0,y0,x1-x0,y1-y0,30,30,x1-x0,y1-y0);
+  return out;
+}
+
+// ============================================================
+// OCR ヘルパー
+// ============================================================
+function cleanOcrText(t){
+  return t.replace(/\s+/g,'')
+    .replace(/^[^\u3041-\u30FF\u4E00-\u9FFF0-9A-Za-z]+/,'')
+    .replace(/[^\u3041-\u30FF\u4E00-\u9FFF0-9A-Za-z\u30FC]+/g,'');
+}
+
+async function ocrTextLine(canvas){
+  const pre=preprocessTextLine(canvas);
+  const r=await Tesseract.recognize(pre,'jpn',{tessedit_pageseg_mode:'7'});
+  return cleanOcrText(r.data.text);
+}
+
+async function ocrDigitBox(canvas,oneDigit=false){
+  const pre=preprocessDigitBox(canvas);
+  const cfg=oneDigit?{tessedit_pageseg_mode:'10',tessedit_char_whitelist:'0123456789'}
+                    :{tessedit_pageseg_mode:'7', tessedit_char_whitelist:'0123456789'};
+  const r=await Tesseract.recognize(pre,'eng',cfg);
+  const nums=r.data.text.match(/\d+/g);
+  return nums?nums[0]:'';
+}
+
+// ============================================================
+// 辞書補正 — Python: get_best_match() と完全同期
+// difflib.SequenceMatcher.ratio + Levenshtein 二重補正, cutoff=0.48
+// ============================================================
+function levenshtein(a, b) {
+  if (!a) return b.length;
+  if (!b) return a.length;
+  let prev = Array.from({length: b.length + 1}, (_, i) => i);
+  for (let i = 0; i < a.length; i++) {
+    const cur = [i + 1];
+    for (let j = 0; j < b.length; j++) {
+      const cost = a[i] === b[j] ? 0 : 1;
+      cur.push(Math.min(
+        cur[j] + 1,        // 挿入
+        prev[j + 1] + 1,   // 削除
+        prev[j] + cost     // 置換
+      ));
+    }
+    prev = cur;
+  }
+  return prev[b.length];
+}
+
+function seqRatio(a,b){
+  if(!a||!b) return 0;
+  const la=a.length,lb=b.length;
+  const dp=Array.from({length:la+1},()=>new Int32Array(lb+1));
+  for(let i=1;i<=la;i++) for(let j=1;j<=lb;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  return dp[la][lb]*2/(la+lb);
+}
+
+function getCloseMatches(raw,dict,cutoff=0.48){
+  const scored=dict.map(w=>({w,r:seqRatio(raw,w)})).filter(x=>x.r>=cutoff);
+  if(!scored.length) return [];
+  return [scored.sort((a,b)=>b.r-a.r)[0].w];
+}
+
+function getBestMatch(rawText,dictionary){
+  if(!rawText) return{word:rawText,dist:999};
+  const raw=cleanOcrText(rawText);
+  let bestWord=raw,bestScore=999,bestRatio=0;
+  for(const w of dictionary){
+    const score=levenshtein(raw,w);
+    const ratio=seqRatio(raw,w);
+    if(score<bestScore){bestScore=score;bestWord=w;}
+    if(ratio>bestRatio){bestRatio=ratio;if(score>bestScore)bestWord=w;}
+  }
+  const closes=getCloseMatches(raw,dictionary,0.48);
+  if(closes.length&&bestScore>3) return{word:closes[0],dist:3};
+  if(bestRatio>=0.5&&bestScore>3) return{word:bestWord,dist:3};
+  return{word:bestWord,dist:bestScore};
+}
+
+function slotFallback(dict,slotIndex,perSlot=1){
+  const start=slotIndex*perSlot;
+  if(perSlot===1) return dict[start]||'';
+  return dict.slice(start,start+perSlot);
+}
+
+// ============================================================
+// メインパイプライン
+// ============================================================
+async function processImage(img,isFront){
+  const b=get169Bounds(img.width,img.height);
+  vc.width=1920;vc.height=1080;
+  vc.getContext('2d').drawImage(img,b.sx,b.sy,b.sw,b.sh,0,0,1920,1080);
+
+  for(let i=0;i<4;i++){
+    const p=PANELS[i];
+    const thumb=cropTo(vc,p.x,p.y,Math.min(750,1920-p.x),200);
+    const pv=document.getElementById(`pv${i}`);
+    pv.width=thumb.width;pv.height=thumb.height;
+    pv.getContext('2d').drawImage(thumb,0,0);
+  }
+
+  if(isFront){
+    setStatus("表画面を固定レイアウト・行単位で解析中...");
+    FRONT_DATA=await parseFrontImage();
+    document.getElementById('dz-f').classList.add('done');
+    document.getElementById('st-f').textContent='解析完了 ✓';
+  } else {
+    setStatus("裏画面の実数値・努力値・性格を解析中...");
+    BACK_DATA=await parseBackImage();
+    document.getElementById('dz-b').classList.add('done');
+    document.getElementById('st-b').textContent='解析完了 ✓';
+  }
+
+  renderGrid();
+
+  if(FRONT_DATA&&BACK_DATA){
+    setStatus("表・裏の解析が完了しました。出力可能です。",'var(--accent2)');
+    generateBlogText();
+  } else {
+    setStatus(isFront?"表の解析完了。次にステータス画面（裏）をアップロードしてください。"
+                     :"裏の解析完了。次に能力画面（表）をアップロードしてください。");
+  }
+}
+
+// ============================================================
+// 表画面パース — Python: parse_front_image() と完全同期
+// ============================================================
+async function parseFrontImage(){
+  const team=[];RAW_DEBUG=[];
+  for(let si=0;si<6;si++){
+    const {x:px,y:py}=PANELS[si];
+    const rawRows={};
+    for(const [key,dx,dy,w,h] of FRONT_ROWS){
+      const crop=cropTo(vc,px+dx,py+dy,w,h);
+      rawRows[key]=await ocrTextLine(crop);
+    }
+    RAW_DEBUG.push({slot:si+1,raw:rawRows});
+
+    let{word:pokemon,dist:pd}=getBestMatch(rawRows.pokemon,POKEMON_DICT);
+    if(pd>3) pokemon=slotFallback(POKEMON_DICT,si);
+
+    let{word:ability,dist:ad}=getBestMatch(rawRows.ability,ABILITY_DICT);
+    if(ad>3) ability=slotFallback(ABILITY_DICT,si);
+
+    let{word:item,dist:id}=getBestMatch(rawRows.item,ITEM_DICT);
+    if(id>3) item=slotFallback(ITEM_DICT,si);
+
+    const fbMoves=slotFallback(MOVE_DICT,si,4);
+    const moves=[];
+    for(let mi=0;mi<4;mi++){
+      const raw=rawRows[`move${mi+1}`];
+      let{word:mv,dist:md}=getBestMatch(raw,MOVE_DICT);
+      if(!raw&&md>3&&fbMoves.length===4) mv=fbMoves[mi];
+      moves.push(mv);
+    }
+
+    team.push({slot:si+1,pokemon,ability,item,moves,
+      stats:{hp:'',attack:'',defense:'',sp_attack:'',sp_defense:'',speed:''},
+      evs:  {hp:'',attack:'',defense:'',sp_attack:'',sp_defense:'',speed:''},
+      nature:''});
+  }
+  return team;
+}
+
+// ============================================================
+// 裏画面パース — Python: parse_back_image() と完全同期
+// ============================================================
+async function parseBackImage(){
+  const result=[];
+  for(let si=0;si<6;si++){
+    const {x:px,y:py}=PANELS[si];
+    const stats={},evs={};
+    for(const [key,{stat:[sx,sy,sw,sh],ev:[ex,ey,ew,eh]}] of Object.entries(BACK_BOXES)){
+      stats[key]=await ocrDigitBox(cropTo(vc,px+sx,py+sy,sw,sh),false);
+      evs[key]  =await ocrDigitBox(cropTo(vc,px+ex,py+ey,ew,eh),true);
+    }
+    const nature=classifyNature(px,py);
+    result.push({stats,evs,nature});
+  }
+  return result;
+}
+
+// ============================================================
+// 性格矢印検出 — Python: classify_nature_from_panel() と完全同期
+// HSV変換で赤(h<12||h>168,s>80,v>120)、青(h>75&&h<120,s>35,v>120) を判定
+// ============================================================
+function classifyNature(panelX, panelY) {
+  const ctx = vc.getContext('2d');
+  const up = [], down = [];
+
+  for (const [_key, label, dx, dy, dw, dh] of NATURE_CHECKS) {
+    const roi = ctx.getImageData(panelX + dx, panelY + dy, dw, dh);
+    let red = 0, blue = 0;
+    const px = roi.data;
+
+    for (let i = 0; i < px.length; i += 4) {
+      const r = px[i], g = px[i + 1], b = px[i + 2];
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      const v = max;
+      const d = max - min;
+      const s = max === 0 ? 0 : (d / max) * 255;
+
+      let h = 0;
+      if (max !== min) {
+        if (max === r) {
+          h = (g - b) / d + (g < b ? 6 : 0);
+        } else if (max === g) {
+          h = (b - r) / d + 2;
+        } else {
+          h = (r - g) / d + 4;
         }
+        h = h * 30; // 0-180 スケール
+      }
 
-        async function processImage(img) {
-            const vCtx = virtualCanvas.getContext('2d');
+      // 赤色のHSV範囲判定 (Hが0〜12、または168〜180)
+      if ((h < 12 || h > 168) && s > 80 && v > 120) {
+        red++;
+      }
+      // 青色のHSV範囲判定
+      if (h > 75 && h < 120 && s > 35 && v > 120) {
+        blue++;
+      }
+    }
 
-            // 1. 画像アスペクト比に関わらず、基準座標を1920x1080に正規化
-            virtualCanvas.width = 1920;
-            virtualCanvas.height = 1080;
-            vCtx.drawImage(img, 0, 0, 1920, 1080);
+    // 検出閾値はPython版の設定に準拠
+    if (red > 15)  up.push(label);
+    if (blue > 40) down.push(label);
+  }
 
-            // 2. カプセル切り出し用の座標パラメータ定義（SV規格 1920x1080ベース）
-            const cropY = 95;   // 縦位置
-            const cropW = 350;  // 切り出す横幅
-            const cropH = 65;   // 切り出す高さ
+  return [...up.map(l => `+${l}`), ...down.map(l => `-${l}`)].join(' ');
+}
 
-            const cropX_left = 550;   // 左側（チームID / チーム名）
-            const cropX_right = 1050; // 右側（トレーナー名）
+// ============================================================
+// 描画
+// ============================================================
+function setField(id,val,dict){
+  const el=document.getElementById(id);if(!el)return;
+  el.value=val||'';el.className='';
+  if(!val){el.classList.add('empty');return;}
+  if(dict&&!dict.includes(val)) el.classList.add('raw');
+}
 
-            // 3. 左側の切り出しと描画
-            canvasTeam.width = cropW;
-            canvasTeam.height = cropH;
-            const ctxTeam = canvasTeam.getContext('2d');
-            ctxTeam.drawImage(virtualCanvas, cropX_left, cropY, cropW, cropH, 0, 0, cropW, cropH);
+function renderGrid(){
+  for(let i=0;i<6;i++){
+    if(FRONT_DATA){
+      const f=FRONT_DATA[i];
+      setField(`nm-${i}`,f.pokemon,POKEMON_DICT);
+      setField(`ab-${i}`,f.ability,ABILITY_DICT);
+      setField(`it-${i}`,f.item,ITEM_DICT);
+      for(let j=0;j<4;j++) setField(`mv-${i}-${j}`,f.moves[j],MOVE_DICT);
+    }
+    if(BACK_DATA){
+      const b=BACK_DATA[i];
+      document.getElementById(`nat-${i}`).textContent='性格: '+(b.nature||'不明');
+      for(const k of STAT_KEYS){
+        document.getElementById(`sv-${i}-${k}`).textContent=b.stats[k]||'—';
+        document.getElementById(`se-${i}-${k}`).textContent=b.evs[k]?`EV ${b.evs[k]}`:'';
+        const sc=document.getElementById(`sc-${i}-${k}`);
+        sc.className='sc';
+        const lbl=STAT_LABELS[k];
+        if(b.nature.includes(`+${lbl}`)) sc.classList.add('up');
+        if(b.nature.includes(`-${lbl}`)) sc.classList.add('dn');
+      }
+    }
+  }
+}
 
-            // 4. 右側の切り出しと描画
-            canvasTrainer.width = cropW;
-            canvasTrainer.height = cropH;
-            const ctxTrainer = canvasTrainer.getContext('2d');
-            ctxTrainer.drawImage(virtualCanvas, cropX_right, cropY, cropW, cropH, 0, 0, cropW, cropH);
+// ============================================================
+// エクスポート
+// ============================================================
+function getMergedTeam(){
+  return Array.from({length:6},(_,i)=>{
+    const f=FRONT_DATA?.[i]||{pokemon:'',ability:'',item:'',moves:['','','','']};
+    const b=BACK_DATA?.[i]||{stats:{},evs:{},nature:''};
+    return{slot:i+1,pokemon:f.pokemon,ability:f.ability,item:f.item,moves:f.moves,
+           nature:b.nature,stats:b.stats,evs:b.evs};
+  });
+}
 
-            statusTeam.innerText = "認識エンジン初期化中...";
-            statusTrainer.innerText = "認識エンジン初期化中...";
-            outputTeam.value = "";
-            outputTrainer.value = "";
+function generateBlogText(){
+  const team=getMergedTeam();
+  let t='========================================\nポケモン チャンピオンズ パーティ構成\n========================================\n';
+  for(const p of team){
+    t+=`■ スロット ${p.slot}: ${p.pokemon||'?'} @ ${p.item||'?'}\n`;
+    if(p.nature) t+=`  性格補正: ${p.nature}\n`;
+    t+=`  特性: ${p.ability||'?'}\n`;
+    const s=p.stats;
+    if(s.hp) t+=`  実数値: ${s.hp}-${s.attack}-${s.defense}-${s.sp_attack}-${s.sp_defense}-${s.speed}\n`;
+    const el=Object.entries(p.evs).filter(([,v])=>v&&v!=='0').map(([k,v])=>`${STAT_LABELS[k]}${v}`);
+    if(el.length) t+=`  努力値: ${el.join(' ')}\n`;
+    t+=`  技構成: ${p.moves.filter(m=>m).join(' / ')}\n`;
+    t+='----------------------------------------\n';
+  }
+  document.getElementById('out').value=t;
+}
 
-            // 5. 並列（非同期）での文字認識の実行
-            // それぞれのキャンバスをTesseractに渡し、同時に処理させます
-            Promise.all([
-                runOcr(canvasTeam, statusTeam, outputTeam),
-                runOcr(canvasTrainer, statusTrainer, outputTrainer)
-            ]).then(() => {
-                console.log("すべての解析処理が完了しました。");
-            });
-        }
+function dl(content,fname,mime){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type:mime}));
+  a.download=fname;a.click();URL.revokeObjectURL(a.href);
+}
 
-        // Tesseractの認識を実行するヘルパー関数
-        async function runOcr(canvas, statusElement, outputElement) {
-            try {
-                const result = await Tesseract.recognize(
-                    canvas,
-                    'jpn',
-                    {
-                        logger: m => {
-                            if (m.status === 'recognizing text') {
-                                statusElement.innerText = `解析中... (${Math.round(m.progress * 100)}%)`;
-                            }
-                        }
-                    }
-                );
-                statusElement.innerText = "解析完了";
-                // 余計なスペースや改行をクリーンアップして表示
-                outputElement.value = result.data.text.replace(/\s+/g, "");
-            } catch (error) {
-                statusElement.innerText = "エラー発生";
-                outputElement.value = "エラー";
-                console.error(error);
-            }
-        }
-    </script>
+document.getElementById('btn-csv').addEventListener('click',()=>{
+  if(!FRONT_DATA){alert('まず能力画面（表）をアップロードしてください。');return;}
+  const t=getMergedTeam();
+  const hdr=['Slot','Pokemon','Ability','Item','Move1','Move2','Move3','Move4','Nature',
+    ...STAT_KEYS.map(k=>STAT_LABELS[k]),...STAT_KEYS.map(k=>STAT_LABELS[k]+'EV')].join(',');
+  const rows=t.map(p=>[p.slot,p.pokemon,p.ability,p.item,...p.moves,p.nature,
+    ...STAT_KEYS.map(k=>p.stats[k]||''),...STAT_KEYS.map(k=>p.evs[k]||'')].join(','));
+  dl('\uFEFF'+hdr+'\n'+rows.join('\n'),'s2_single_ranked_teams.csv','text/csv;charset=utf-8');
+});
+
+document.getElementById('btn-json').addEventListener('click',()=>{
+  if(!FRONT_DATA){alert('まず能力画面（表）をアップロードしてください。');return;}
+  const out={season:'M-2',rule:'シングル',
+    teams:[{rank:1,rating_value:2564.519,team:getMergedTeam()}],
+    updated_at:new Date().toISOString()};
+  dl(JSON.stringify(out,null,2),'s2_single_ranked_teams.json','application/json');
+});
+
+document.getElementById('btn-text').addEventListener('click',()=>{
+  if(!FRONT_DATA||!BACK_DATA){alert('表・裏の両方の画像をアップロードしてください。');return;}
+  generateBlogText();
+});
+
+document.getElementById('btn-raw').addEventListener('click',()=>{
+  if(!RAW_DEBUG.length){alert('まず画像をアップロードしてください。');return;}
+  document.getElementById('out').value='=== OCR 生テキスト (デバッグ用) ===\n'+
+    RAW_DEBUG.map(s=>`[Slot ${s.slot}]\n`+Object.entries(s.raw).map(([k,v])=>`  ${k}: ${v}`).join('\n')).join('\n\n');
+});
+</script>
 </body>
 </html>

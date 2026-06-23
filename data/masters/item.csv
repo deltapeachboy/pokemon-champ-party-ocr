@@ -1,0 +1,148 @@
+id,name_ja,name_en,is_megastone
+1,ちからのハチマキ,Muscle Band,false
+2,ものしりメガネ,Wise Glasses,false
+3,おおきなねっこ,Big Root,false
+4,ひかりのねんど,Light Clay,false
+5,メトロノーム,Metronome,false
+6,こうかくレンズ,Wide Lens,false
+7,あついいわ,Heat Rock,false
+8,さらさらいわ,Smooth Rock,false
+9,しめったいわ,Damp Rock,false
+10,つめたいいわ,Icy Rock,false
+11,いのちのたま,Life Orb,false
+12,きれいなぬけがら,Shed Shell,false
+13,くろいてっきゅう,Iron Ball,false
+14,たつじんのおび,Expert Belt,false
+15,フォーカスレンズ,Zoom Lens,false
+16,クラボのみ,Cheri Berry,false
+17,カゴのみ,Chesto Berry,false
+18,モモンのみ,Pecha Berry,false
+19,チーゴのみ,Rawst Berry,false
+20,ナナシのみ,Aspear Berry,false
+21,ヒメリのみ,Leppa Berry,false
+22,オレンのみ,Oran Berry,false
+23,キーのみ,Persim Berry,false
+24,ラムのみ,Lum Berry,false
+25,オボンのみ,Sitrus Berry,false
+26,オッカのみ,Occa Berry,false
+27,イトケのみ,Passho Berry,false
+28,ソクノのみ,Wacan Berry,false
+29,リンドのみ,Rindo Berry,false
+30,ヤチェのみ,Yache Berry,false
+31,ヨプのみ,Chople Berry,false
+32,ビアーのみ,Kebia Berry,false
+33,シュカのみ,Shuca Berry,false
+34,バコウのみ,Coba Berry,false
+35,ウタンのみ,Payapa Berry,false
+36,タンガのみ,Tanga Berry,false
+37,ヨロギのみ,Charti Berry,false
+38,カシブのみ,Kasib Berry,false
+39,ハバンのみ,Haban Berry,false
+40,ナモのみ,Colbur Berry,false
+41,リリバのみ,Babiri Berry,false
+42,ロゼルのみ,Roseli Berry,false
+43,ホズのみ,Chilan Berry,false
+44,おうじゃのしるし,King's Rock,false
+45,メタルコート,Metal Coat,false
+46,きせきのタネ,Miracle Seed,false
+47,もくたん,Charcoal,false
+48,しんぴのしずく,Mystic Water,false
+49,シルクのスカーフ,Silk Scarf,false
+50,するどいくちばし,Sharp Beak,false
+51,ぎんのこな,Silver Powder,false
+52,じしゃく,Magnet,false
+53,かたいいし,Hard Stone,false
+54,のろいのおふだ,Spell Tag,false
+55,りゅうのキバ,Dragon Fang,false
+56,どくばり,Poison Barb,false
+57,やわらかいすな,Soft Sand,false
+58,くろいメガネ,Black Glasses,false
+59,くろおび,Black Belt,false
+60,とけないこおり,Never-Melt Ice,false
+61,まがったスプーン,Twisted Spoon,false
+62,きあいのハチマキ,Focus Band,false
+63,ピントレンズ,Scope Lens,false
+64,たべのこし,Leftovers,false
+65,かいがらのすず,Shell Bell,false
+66,きあいのタスキ,Focus Sash,false
+67,こだわりスカーフ,Choice Scarf,false
+68,でんきだま,Light Ball,false
+69,ひかりのこな,Bright Powder,false
+70,しろいハーブ,White Herb,false
+71,メンタルハーブ,Mental Herb,false
+72,ようせいのハネ,Fairy Feather,false
+73,オーダイルナイト,Feraligatrinite,true
+74,メガニウムナイト,Meganiumite,true
+75,エンブオナイト,Emboarite,true
+76,スピアナイト,Beedrillite,true
+77,デンリュウナイト,Ampharosite,true
+78,ガメノデスナイト,Barbaracleite,true
+79,スターミナイト,Starmite,true
+80,ウツボットナイト,Victreebelite,true
+81,チルタリスナイト,Altarianite,true
+82,ジュペッタナイト,Banettite,true
+83,バクーダナイト,Cameruptite,true
+84,クチートナイト,Mawilite,true
+85,アブソルナイト,Absolite,true
+86,ヤドランナイト,Slowbronite,true
+87,カイリュナイト,Dragoniteite,true
+88,ユキメノコナイト,Froslassite,true
+89,ルチャブルナイト,Hawluchanite,true
+90,バンギラスナイト,Tyranitarite,true
+91,ピジョットナイト,Pidgeotite,true
+92,ライボルトナイト,Manectite,true
+93,ヘルガナイト,Houndoominite,true
+94,タブンネナイト,Audinite,true
+95,ミミロップナイト,Lopunnite,true
+96,ヤミラミナイト,Sablenite,true
+97,サメハダナイト,Sharpedonite,true
+98,ギャラドスナイト,Gyaradosite,true
+99,ルカリオナイト,Lucarionite,true
+100,ヘラクロスナイト,Heracronite,true
+101,プテラナイト,Aerodactylite,true
+102,フーディナイト,Alakazamite,true
+103,ジジーロナイト,Drampashite,true
+104,シビルドナイト,Eelektrossite,true
+105,オニゴーリナイト,Glalitite,true
+106,カイロスナイト,Pinsirite,true
+107,タイレーツナイト,Falinksite,true
+108,ペンドラナイト,Scolipedite,true
+109,サーナイトナイト,Gardevoirite,true
+110,エルレイドナイト,Galladite,true
+111,エアームドナイト,Skarmoryite,true
+112,ピクシナイト,Clefableite,true
+113,ドラミドナイト,Dragalgeite,true
+114,ズルズキナイト,Scraftyite,true
+115,カエンジシナイト,Pyroarite,true
+116,カラマネナイト,Malamarite,true
+117,ドリュウズナイト,Excadrillite,true
+118,シャンデラナイト,Chandelureite,true
+119,ボスゴドラナイト,Aggronite,true
+120,メタグロスナイト,Metagrossite,true
+121,ゲンガナイト,Gengarite,true
+122,チャーレムナイト,Medichamite,true
+123,ユキノオナイト,Abomasnowite,true
+124,ハッサムナイト,Scizorite,true
+125,ガブリアスナイト,Garchompite,true
+126,ハガネールナイト,Steelixite,true
+127,ガルーラナイト,Kangaskhanite,true
+128,リザードナイトX,Charizardite X,true
+129,リザードナイトY,Charizardite Y,true
+130,カメックスナイト,Blastoisinite,true
+131,フシギバナイト,Venusaurite,true
+132,ゲッコウガナイト,Greninjite,true
+133,マフォクシナイト,Delphoxite,true
+134,ブリガロナイト,Chesnaughtite,true
+135,フラエッテナイト,Floetteite,true
+136,ライチュウナイトX,Raichuite X,true
+137,ライチュウナイトY,Raichuite Y,true
+138,ジュカインナイト,Sceptilite,true
+139,ラグラージナイト,Swampertite,true
+140,バシャーモナイト,Blazikenite,true
+141,ムクホークナイト,Staraptorite,true
+142,チリーンナイト,Chimechoite,true
+143,ケケンカニナイト,Crabominableite,true
+144,スコヴィラナイト,Scovillainite,true
+145,ゴルーグナイト,Golurkite,true
+146,ニャオニクスナイト,Meowsticite,true
+147,キラフロルナイト,Glimmoraite,true

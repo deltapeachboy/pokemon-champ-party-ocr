@@ -1,0 +1,306 @@
+id,name_ja,name_en
+1,アイスフェイス,Ice Face
+2,アイスボディ,Ice Body
+3,あくしゅう,Stench
+4,あついしぼう,Thick Fat
+5,あとだし,Pickpocket
+6,アナライズ,Analytic
+7,あまのじゃく,Contrary
+8,あめうけざら,Rain Dish
+9,あめふらし,Drizzle
+10,アロマベール,Aroma Veil
+11,いかく,Intimidate
+12,いかりのこうら,Anger Shell
+13,いかりのつぼ,Anger Point
+14,いしあたま,Rock Head
+15,いたずらごころ,Prankster
+16,いやしのこころ,Healer
+17,イリュージョン,Illusion
+18,うなぎのぼり,Upward Currents
+19,うのミサイル,Gulp Missile
+20,うるおいボイス,Liquid Voice
+21,うるおいボディ,Hydration
+22,エアロック,Air Lock
+23,エレキスキン,Galvanize
+24,エレキメイカー,Electric Surge
+25,えんかく,Long Reach
+26,オーラブレイク,Aura Break
+27,おうごんのからだ,Good as Gold
+28,おどりこ,Dancer
+29,おみとおし,Frisk
+30,おもかげやどし,Embody Aspect
+31,おもてなし,Hospitality
+32,おやこあい,Parental Bond
+33,おわりのだいち,Desolate Land
+34,カーリーヘアー,Tangling Hair
+35,かいりきバサミ,Hyper Cutter
+36,かがくのちから,Power of Alchemy
+37,かがくへんかガス,Neutralizing Gas
+38,かげふみ,Shadow Tag
+39,かぜのり,Wind Rider
+40,かそく,Speed Boost
+41,かたいツメ,Tough Claws
+42,かたやぶり,Mold Breaker
+43,かちき,Competitive
+44,カブトアーマー,Battle Armor
+45,かるわざ,Unburden
+46,かわりもの,Imposter
+47,かんそうはだ,Dry Skin
+48,かんつうドリル,Piercing Drill
+49,かんろなミツ,Sweet Syrup
+50,がんじょう,Sturdy
+51,がんじょうあご,Strong Jaw
+52,ききかいひ,Emergency Exit
+53,きけんよち,Anticipation
+54,きずなへんげ,Battle Bond
+55,きみょうなくすり,Curious Medicine
+56,きもったま,Scrappy
+57,きゅうばん,Suction Cups
+58,きょううん,Super Luck
+59,きょうえん,Costar
+60,きょうせい,Symbiosis
+61,きよめのしお,Purifying Salt
+62,きれあじ,Sharpness
+63,きんしのちから,Mycelium Might
+64,きんちょうかん,Unnerve
+65,ぎたい,Mimicry
+66,ぎゃくじょう,Berserk
+67,ぎょぐん,Schooling
+68,くいしんぼう,Gluttony
+69,クイックドロウ,Quick Draw
+70,クォークチャージ,Quark Drive
+71,くさのけがわ,Grass Pelt
+72,くだけるよろい,Weak Armor
+73,クリアボディ,Clear Body
+74,くろのいななき,Grim Neigh
+75,グラスメイカー,Grassy Surge
+76,げきりゅう,Torrent
+77,こおりのりんぷん,Ice Scales
+78,こだいかっせい,Protosynthesis
+79,こぼれダネ,Seed Sower
+80,こんがりボディ,Well-Baked Body
+81,こんじょう,Guts
+82,ごりむちゅう,Gorilla Tactics
+83,サーフテール,Surge Surfer
+84,サイコメイカー,Psychic Surge
+85,さいせいりょく,Regenerator
+86,さまようたましい,Wandering Spirit
+87,さめはだ,Rough Skin
+88,サンパワー,Solar Power
+89,シェルアーマー,Shell Armor
+90,しぜんかいふく,Natural Cure
+91,しめりけ,Damp
+92,しゅうかく,Harvest
+93,しょうりのほし,Victory Star
+94,しれいとう,Commander
+95,しろいけむり,White Smoke
+96,しろのいななき,Chilling Neigh
+97,しんがん,Mind's Eye
+98,シンクロ,Synchronize
+99,しんりょく,Overgrow
+100,じきゅうりょく,Stamina
+101,じしんかじょう,Moxie
+102,じゅうなん,Limber
+103,じゅくせい,Ripen
+104,じょうききかん,Steam Engine
+105,じょおうのいげん,Queenly Majesty
+106,じりょく,Magnet Pull
+107,じんばいったい,As One
+108,スイートベール,Sweet Veil
+109,すいすい,Swift Swim
+110,すいほう,Water Bubble
+111,スカイスキン,Aerilate
+112,スキルリンク,Skill Link
+113,スクリューおびれ,Propeller Tail
+114,すじがねいり,Stalwart
+115,すてみ,Reckless
+116,スナイパー,Sniper
+117,すなあらし,Sand Stream
+118,すなかき,Sand Rush
+119,すながくれ,Sand Veil
+120,すなのちから,Sand Force
+121,すなはき,Sand Spit
+122,すりぬけ,Infiltrator
+123,するどいめ,Keen Eye
+124,スロースタート,Slow Start
+125,スワームチェンジ,Power Construct
+126,せいぎのこころ,Justified
+127,せいしんりょく,Inner Focus
+128,せいでんき,Static
+129,ぜったいねむり,Comatose
+130,ゼロフォーミング,Tera Shift
+131,そうしょく,Sap Sipper
+132,そうだいしょう,Supreme Overlord
+133,ソウルハート,Soul-Heart
+134,ターボブレイズ,Teravolt
+135,たいねつ,Heatproof
+136,たまひろい,Ball Fetch
+137,たんじゅん,Simple
+138,ダークオーラ,Dark Aura
+139,ダウンロード,Download
+140,だっひ,Shed Skin
+141,ダルマモード,Zen Mode
+142,ちからずく,Sheer Force
+143,ちからもち,Huge Power
+144,ちくでん,Volt Absorb
+145,ちどりあし,Tangled Feet
+146,ちょすい,Water Absorb
+147,テイルアーマー,Armor Tail
+148,てきおうりょく,Adaptability
+149,テクニシャン,Technician
+150,てつのこぶし,Iron Fist
+151,てつのトゲ,Iron Barbs
+152,テラスシェル,Tera Shell
+153,テラスチェンジ,Teraform Zero
+154,テラボルテージ,Teravolt
+155,テレパシー,Telepathy
+156,てんきや,Forecast
+157,てんねん,Unaware
+158,てんのめぐみ,Serene Grace
+159,デルタストリーム,Delta Stream
+160,でんきエンジン,Motor Drive
+161,でんきにかえる,Electromorphosis
+162,とうそうしん,Rivalry
+163,とびだすなかみ,Innards Out
+164,とびだすハバネロ,Spitting Habanero
+165,トランジスタ,Transistor
+166,トレース,Trace
+167,とれないにおい,Lingering Odor
+168,どくくぐつ,Toxic Puppeteer
+169,どくげしょう,Toxic Debris
+170,どくしゅ,Poison Touch
+171,どくのくさり,Toxic Chain
+172,どくのトゲ,Poison Point
+173,どくぼうそう,Toxic Boost
+174,どしょく,Earth Eater
+175,ドラゴンスキン,Dragonize
+176,どんかん,Oblivious
+177,ナイトメア,Bad Dreams
+178,なまけ,Truant
+179,にげあし,Run Away
+180,にげごし,Wimp Out
+181,ぬめぬめ,Gooey
+182,ねつこうかん,Thermal Exchange
+183,ねつぼうそう,Flare Boost
+184,ねんちゃく,Sticky Hold
+185,ノーガード,No Guard
+186,ノーてんき,Cloud Nine
+187,ノーマルスキン,Normalize
+188,のろわれボディ,Cursed Body
+189,ハードロック,Solid Rock
+190,はがねつかい,Steelworker
+191,はがねのせいしん,Steely Spirit
+192,はじまりのうみ,Primordial Sea
+193,はっこう,Illuminate
+194,はとむね,Big Pecks
+195,ハドロンエンジン,Hadron Engine
+196,はやあし,Quick Feet
+197,はやおき,Early Bird
+198,はやてのつばさ,Gale Wings
+199,はらぺこスイッチ,Hunger Switch
+200,はりきり,Hustle
+201,はりこみ,Stakeout
+202,はんすう,Cud Chew
+203,ばけのかわ,Disguise
+204,バッテリー,Battery
+205,バトルスイッチ,Stance Change
+206,バリアフリー,Screen Cleaner
+207,ばんけん,Guard Dog
+208,パステルベール,Pastel Veil
+209,パワースポット,Power Spot
+210,パンクロック,Punk Rock
+211,ヒーリングシフト,Triage
+212,ひdeり,Drought
+213,ひとでなし,Merciless
+214,ひひいろのこどう,Orichalcum Pulse
+215,ひらいしん,Lightning Rod
+216,ビーストブースト,Beast Boost
+217,ビビッドボディ,Dazzling
+218,びびり,Rattled
+219,びんじょう,Opportunist
+220,ファーコート,Fur Coat
+221,ファントムガード,Shadow Shield
+222,フィルター,Filter
+223,ふうりょくでんき,Wind Power
+224,フェアリーオーラ,Fairy Aura
+225,フェアリースキン,Pixilate
+226,ふかしのこぶし,Unseen Fist
+227,ふくがん,Compound Eyes
+228,ふくつのこころ,Steadfast
+229,ふくつのたて,Dauntless Shield
+230,ふしぎなうろこ,Marvel Scale
+231,ふしぎなまもり,Wonder Guard
+232,ふしょく,Corrosion
+233,ふとうのけん,Intrepid Sword
+234,ふみん,Insomnia
+235,ふゆう,Levitate
+236,フラワーギフト,Flower Gift
+237,フラワーベール,Flower Veil
+238,フリーズスキン,Refrigerate
+239,フレンドガード,Friend Guard
+240,ぶきよう,Klutz
+241,ブレインフォース,Neuroforce
+242,プラス,Plus
+243,プリズムアーマー,Prism Armor
+244,プレッシャー,Pressure
+245,ヘドロえき,Liquid Ooze
+246,へんげんじざい,Protean
+247,へんしょく,Color Change
+248,ヘヴィメタル,Heavy Metal
+249,ほうし,Effect Spore
+250,ほおぶくろ,Cheek Pouch
+251,ほのおのからだ,Flame Body
+252,ほのおのたてがみ,Blazing Mane
+253,ほろびのボディ,Perish Body
+254,ぼうおん,Soundproof
+255,ぼうじん,Overcoat
+256,ぼうだん,Bulletproof
+257,ポイズンヒール,Poison Heal
+258,マイティチェンジ,Zero to Hero
+259,マイナス,Minus
+260,マイペース,Own Tempo
+261,マグマのよろい,Magma Armor
+262,まけんき,Defiant
+263,マジシャン,Magician
+264,マジックガード,Magic Guard
+265,マジックミラー,Magic Bounce
+266,マルチスケイル,Multiscale
+267,マルチタイプ,Multitype
+268,ミイラ,Mummy
+269,ミストメイカー,Misty Surge
+270,みずがため,Water Compaction
+271,みずのベール,Water Veil
+272,ミラーアーマー,Mirror Armor
+273,ミラクルスキン,Wonder Skin
+274,むしのしらせ,Swarm
+275,ムラっけ,Moody
+276,メガソーラー,Mega Solar
+277,メガランチャー,Mega Launcher
+278,メタルプロテクト,Full Metal Body
+279,メロメロボディ,Cute Charm
+280,めんえき,Immunity
+281,もうか,Blaze
+282,ものひろい,Pickup
+283,もふもふ,Fluffy
+284,もらいび,Flash Fire
+285,やるき,Vital Spirit
+286,ゆうばく,Aftermath
+287,ゆきかき,Slush Rush
+288,ゆきがくれ,Snow Cloak
+289,ゆきふらし,Snow Warning
+290,ようりょくそ,Chlorophyll
+291,ヨガパワー,Pure Power
+292,よちむ,Forewarn
+293,ライトメタル,Light Metal
+294,リーフガード,Leaf Guard
+295,リベロ,Libero
+296,リミットシールド,Shields Down
+297,りゅうのあぎと,Dragon's Maw
+298,りんぷん,Shield Dust
+299,レシーバー,Receiver
+300,わざわいのうつわ,Vessel of Ruin
+301,わざわいのおふだ,Tablets of Ruin
+302,わざわいのたま,Beads of Ruin
+303,わざわいのつるぎ,Sword of Ruin
+304,わたげ,Cotton Down
+305,わるいてぐせ,Pickpocket

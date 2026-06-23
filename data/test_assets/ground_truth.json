@@ -1,0 +1,181 @@
+{
+  "test_set_id": "sample_01",
+  "front_image_path": "data/test_assets/sample_front.jpeg",
+  "back_image_path": "data/test_assets/sample_back.jpeg",
+  "team": [
+    {
+      "slot": 1,
+      "pokemon": "フォークス",
+      "ability": "かそく",
+      "item": "バシャーモナイト",
+      "moves": [
+        "ブレイズキック",
+        "とびひざげり",
+        "かみなりパンチ",
+        "まもる"
+      ],
+      "nature": "+こうげき -とくこう",
+      "stats": {
+        "hp": 187,
+        "attack": 189,
+        "defense": 90,
+        "sp_attack": 117,
+        "sp_defense": 90,
+        "speed": 102
+      },
+      "evs": {
+        "hp": 32,
+        "attack": 32,
+        "defense": 0,
+        "sp_attack": 0,
+        "sp_defense": 0,
+        "speed": 2
+      }
+    },
+    {
+      "slot": 2,
+      "pokemon": "イオナン",
+      "ability": "ひらいしん",
+      "item": "ライチュウナイトY",
+      "moves": [
+        "でんじほう",
+        "きあいだま",
+        "なみのり",
+        "わるだくみ"
+      ],
+      "nature": "+すばやさ -こうげき",
+      "stats": {
+        "hp": 137,
+        "attack": 99,
+        "defense": 75,
+        "sp_attack": 142,
+        "sp_defense": 100,
+        "speed": 178
+      },
+      "evs": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "sp_attack": 32,
+        "sp_defense": 0,
+        "speed": 32
+      }
+    },
+    {
+      "slot": 3,
+      "pokemon": "ラント",
+      "ability": "あついしぼう",
+      "item": "きあいのタスキ",
+      "moves": [
+        "じしん",
+        "つららばり",
+        "がんせきふうじ",
+        "こおりのつぶて"
+      ],
+      "nature": "+こうげき -とくこう",
+      "stats": {
+        "hp": 217,
+        "attack": 200,
+        "defense": 102,
+        "sp_attack": 81,
+        "sp_defense": 80,
+        "speed": 100
+      },
+      "evs": {
+        "hp": 32,
+        "attack": 32,
+        "defense": 2,
+        "sp_attack": 0,
+        "sp_defense": 0,
+        "speed": 0
+      }
+    },
+    {
+      "slot": 4,
+      "pokemon": "キモクナーイ",
+      "ability": "げきりゅう",
+      "item": "オボンのみ",
+      "moves": [
+        "じしん",
+        "クイックターン",
+        "あくび",
+        "ステルスロック"
+      ],
+      "nature": "+ぼうぎょ -とくこう",
+      "stats": {
+        "hp": 207,
+        "attack": 130,
+        "defense": 123,
+        "sp_attack": 94,
+        "sp_defense": 142,
+        "speed": 80
+      },
+      "evs": {
+        "hp": 32,
+        "attack": 0,
+        "defense": 2,
+        "sp_attack": 0,
+        "sp_defense": 32,
+        "speed": 0
+      }
+    },
+    {
+      "slot": 5,
+      "pokemon": "ミミック",
+      "ability": "おうごんのからだ",
+      "item": "こだわりスカーフ",
+      "moves": [
+        "ゴールドラッシュ",
+        "シャドーボール",
+        "10まんボルト",
+        "トリック"
+      ],
+      "nature": "+すばやさ -こうげき",
+      "stats": {
+        "hp": 164,
+        "attack": 72,
+        "defense": 115,
+        "sp_attack": 185,
+        "sp_defense": 111,
+        "speed": 149
+      },
+      "evs": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "sp_attack": 32,
+        "sp_defense": 0,
+        "speed": 32
+      }
+    },
+    {
+      "slot": 6,
+      "pokemon": "ヤミレ",
+      "ability": "ばけのかわ",
+      "item": "いのちのたま",
+      "moves": [
+        "じゃれつく",
+        "シャドークロー",
+        "かげうち",
+        "つるぎのまい"
+      ],
+      "nature": "+こうげき -とくこう",
+      "stats": {
+        "hp": 162,
+        "attack": 156,
+        "defense": 100,
+        "sp_attack": 63,
+        "sp_defense": 125,
+        "speed": 118
+      },
+      "evs": {
+        "hp": 32,
+        "attack": 32,
+        "defense": 0,
+        "sp_attack": 0,
+        "sp_defense": 0,
+        "speed": 2
+      }
+    }
+  ]
+}
