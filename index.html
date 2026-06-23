@@ -132,14 +132,15 @@ const SMARTPHONE_PANELS = [
 let CURRENT_PANELS = PC_PANELS;
 const ORIG_PW = 802.0, ORIG_PH = 188.0;
 
+// 【表面最新アップデート】：タイプアイコンを避けるため左端(dx)を右にスライド
 const FRONT_ROWS = [
-  ["pokemon", 78,  10, 280, 45],
-  ["ability", 95,  62, 260, 38],
-  ["item",    95, 112, 310, 42],
-  ["move1",  430,   8, 300, 42],
-  ["move2",  430,  56, 300, 42],
-  ["move3",  430, 103, 300, 42],
-  ["move4",  430, 150, 300, 42],
+  ["pokemon", 110,  10, 248, 45], // dx:78 ➔ 110
+  ["ability", 110,  62, 245, 38], // dx:95 ➔ 110
+  ["item",    110, 112, 295, 42], // dx:95 ➔ 110
+  ["move1",  465,   8, 265, 42], // dx:430 ➔ 465（物理・特殊分類アイコンを完全除外）
+  ["move2",  465,  56, 265, 42],
+  ["move3",  465, 103, 265, 42],
+  ["move4",  465, 150, 265, 42],
 ];
 
 const BACK_BOXES = {
@@ -279,6 +280,51 @@ function otsuThreshold(px){
   return threshold;
 }
 
+// 【表面最新アップデート】：タイプアイコンゴミを動的カットするスキャン投影法
+function autoTrimLeftIcon(canvas) {
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const imgData = ctx.getImageData(0, 0, w, h);
+  const px = imgData.data;
+
+  const columnDensity = new Int32Array(w);
+  for (let x = 0; x < w; x++) {
+    let blackPixels = 0;
+    for (let y = 0; y < h; y++) {
+      const idx = (y * w + x) * 4;
+      if (px[idx] < 128) {
+        blackPixels++;
+      }
+    }
+    columnDensity[x] = blackPixels;
+  }
+
+  let startX = 0;
+  let foundIcon = false;
+  const scanLimit = Math.floor(w * 0.35);
+
+  for (let x = 3; x < scanLimit; x++) {
+    if (columnDensity[x] > 4) {
+      foundIcon = true;
+    }
+    if (foundIcon && columnDensity[x] <= 1 && columnDensity[x+1] <= 1) {
+      startX = x + 2;
+      break;
+    }
+  }
+
+  if (startX === 0) {
+    startX = Math.floor(w * 0.15);
+  }
+
+  const trimmed = document.createElement('canvas');
+  trimmed.width = w - startX;
+  trimmed.height = h;
+  const tCtx = trimmed.getContext('2d');
+  tCtx.putImageData(ctx.getImageData(startX, 0, w - startX, h), 0, 0);
+  return trimmed;
+}
+
 function preprocessTextLine(canvas){
   const W=canvas.width*4,H=canvas.height*4;
   const big=document.createElement('canvas'); big.width=W; big.height=H;
@@ -290,6 +336,7 @@ function preprocessTextLine(canvas){
   ctx.putImageData(id,0,0); return big;
 }
 
+// 完璧と賞賛された12:49PM時点のプレーンな裏画面二値化
 function preprocessDigitBox(canvas){
   const W=canvas.width*8,H=canvas.height*8;
   const big=document.createElement('canvas'); big.width=W; big.height=H;
@@ -309,16 +356,23 @@ function cleanOcrText(t){
 }
 
 async function ocrTextLine(canvas){
-  const r=await Tesseract.recognize(preprocessTextLine(canvas),'jpn',{tessedit_pageseg_mode:'7'});
+  const pre=preprocessTextLine(canvas);
+  // 表画面のみ動的タイプアイコンカットを適用
+  const cleaned=autoTrimLeftIcon(pre);
+  const r=await Tesseract.recognize(cleaned,'jpn',{tessedit_pageseg_mode:'7'});
   return cleanOcrText(r.data.text);
 }
 
+// 完璧な数値パース（最長グループ抽出・PSM=8・12:49PM基準）
 async function ocrDigitBox(canvas,oneDigit=false,logCtx=null){
+  const pre=preprocessDigitBox(canvas);
   const cfg={tessedit_pageseg_mode:'8',tessedit_char_whitelist:'0123456789'};
-  const r=await Tesseract.recognize(preprocessDigitBox(canvas),'eng',cfg);
-  const out=pickDigitValue(r.data.text,oneDigit);
+  const r=await Tesseract.recognize(pre,'eng',cfg);
+  const nums=r.data.text.match(/\d+/g);
+  if (!nums) return '';
+  const out=nums.reduce((longest, current) => current.length > longest.length ? current : longest, "");
   // #region agent log
-  if(logCtx) dbgLog('index.html:ocrDigitBox','digit OCR raw',{...logCtx,raw:r.data.text,nums:r.data.text.match(/\d+/g)||[],out,box:{w:canvas.width,h:canvas.height},oneDigit},'H2');
+  if(logCtx) dbgLog('index.html:ocrDigitBox','digit OCR raw',{...logCtx,raw:r.data.text,nums,out,oneDigit},'H2');
   // #endregion
   return out;
 }
@@ -334,9 +388,19 @@ function levenshtein(a,b){
   return prev[b.length];
 }
 
+// 【表面最新アップデート】：ニックネーム誤補正を完全に防止する短語制限
 function getBestMatch(rawText,dictionary){
   if(!rawText) return{word:'',dist:999,matched:false};
   const raw=cleanOcrText(rawText);
+  if(raw.length <= 3) {
+    let bestWord=raw, bestScore=999;
+    for(const w of dictionary){
+      const score=levenshtein(raw,w);
+      if(score<bestScore){bestScore=score; bestWord=w;}
+    }
+    return{word:bestWord,dist:bestScore,matched:bestScore<=1};
+  }
+
   let bestWord=raw,bestScore=999;
   for(const w of dictionary){
     const score=levenshtein(raw,w);
@@ -408,7 +472,7 @@ async function processImage(img,isFront){
     document.getElementById('st-b').textContent='解析完了 ✓';
   }
   renderGrid();
-  if(FRONT_DATA&&BACK_DATA){ setStatus("表・裏の解析が完了しました。",'var(--accent2)'); generateBlogText(); }
+  if(FRONT_DATA&&BACK_DATA){ setStatus("表・裏の解析およびマージが完了しました。",'var(--accent2)'); generateBlogText(); }
 }
 
 async function parseFrontImage(){
@@ -461,18 +525,19 @@ async function parseBackImage(){
   return result;
 }
 
+// 完璧な性格判定カラーバランス判定（変数名バグを修正）
 function classifyNatureFromPixels(panelX,panelY,rx,ry){
   const ctx=vc.getContext('2d'); const statCounts={};
   for(const [key,[ox,oy,ow,oh]] of Object.entries(NATURE_STAT_BOXES)){
     const img=ctx.getImageData(panelX+Math.round(ox*rx),panelY+Math.round(oy*ry),Math.round(ow*rx),Math.round(oh*ry));
-    let orange=0,blue=0;
+    let orangeCnt=0,blueCnt=0;
     for(let i=0;i<img.data.length;i+=4){
       const r=img.data[i],g=img.data[i+1],b=img.data[i+2],a=img.data[i+3];
       if(a<150||Math.max(r,g,b)<=150) continue;
-      if(r-b>25&&r-g>15&&g>130) orange++;
-      if(b-r>25&&b-g>10&&g>140) blue++;
+      if(r-b>25&&r-g>15&&g>130) orangeCnt++;
+      if(b-r>25&&b-g>10&&g>140) blueCnt++;
     }
-    statCounts[key]={orange,blue};
+    statCounts[key]={orange: orangeCnt, blue: blueCnt};
   }
   const THRESH=8;
   let upKey='',downKey='',bestOrange=0,bestBlue=0;
